@@ -7,6 +7,8 @@ import(
 	"strings"
 	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/MananLed/upKeepz-cli/internal/service"
+	"github.com/fatih/color"
+	"github.com/common-nighthawk/go-figure"
 )
 
 type UserHandler struct{
@@ -22,30 +24,31 @@ func NewUserHandler(us *service.UserService) *UserHandler{
 func (h *UserHandler) SignUp(){
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("========= Sign Up =======")
+	myFigure := figure.NewColorFigure("Sign Up","", "purple", false)
+	myFigure.Print()
 
-	fmt.Print("First Name: ")
+	color.Yellow("First Name: ")
 	firstName, _ := reader.ReadString('\n')
 
-	fmt.Print("Middle Name (optional): ")
+	color.Yellow("Middle Name (optional): ")
 	middleName, _ := reader.ReadString('\n')
 
-	fmt.Print("Last Name: ")
+	color.Yellow("Last Name: ")
 	lastName, _ := reader.ReadString('\n')
 
-	fmt.Print("Email: ")
+	color.Yellow("Email: ")
 	email, _ := reader.ReadString('\n')
 
-	fmt.Print("Mobile Number: ")
+	color.Yellow("Mobile Number: ")
 	mobile, _ := reader.ReadString('\n')
 
-	fmt.Print("ID (username): ")
+	color.Yellow("ID (username): ")
 	id, _ := reader.ReadString('\n')
 
-	fmt.Print("Password: ")
+	color.Yellow("Password: ")
 	password, _ := reader.ReadString('\n')
 
-	fmt.Print("Role (Admin / MaintenanceOfficer / FlatResident): ")
+	color.Yellow("Role (Admin / MaintenanceOfficer / FlatResident): ")
 	roleStr, _ := reader.ReadString('\n')
 
 	user := model.User{
@@ -70,13 +73,13 @@ func (h *UserHandler) SignUp(){
 
 func (h *UserHandler) Login(){
 	reader := bufio.NewReader(os.Stdin)
+	myFigure := figure.NewColorFigure("Login","", "blue", false)
+	myFigure.Print()
 
-	fmt.Println("======= Login =======")
-
-	fmt.Print("ID (username): ")
+	color.Yellow("ID (username): ")
 	id, _ := reader.ReadString('\n')
 
-	fmt.Print("Password: ")
+	color.Yellow("Password: ")
 	password, _ := reader.ReadString('\n')
 
 	id = strings.TrimSpace(id)

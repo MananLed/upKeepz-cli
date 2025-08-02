@@ -11,6 +11,11 @@ import(
 const dataDir = "../../data"
 const userDataFile = dataDir + "/users.json"
 
+type UserRepositoryInterface interface {
+	AddUser(user model.User) error
+	GetUserByID(id string) (*model.User, error)
+}
+
 type UserRepository struct{
 	mu sync.Mutex 
 }

@@ -9,6 +9,8 @@ import (
 	"github.com/MananLed/upKeepz-cli/internal/handlers"
 	"github.com/MananLed/upKeepz-cli/internal/repository"
 	"github.com/MananLed/upKeepz-cli/internal/service"
+	"github.com/fatih/color"
+	"github.com/common-nighthawk/go-figure"
 )
 
 func main(){
@@ -20,11 +22,15 @@ func main(){
 	reader := bufio.NewReader(os.Stdin)
 
 	for{
-		fmt.Println("\n======= UpKeepz =======")
-		fmt.Println("1. Sign Up")
-		fmt.Println("2. Login")
-		fmt.Println("3. Exit")
-		fmt.Println("Enter your choice: ")
+		myFigure := figure.NewColorFigure("UpKeepz","", "green", false)
+		fmt.Println("🛠️                                                 🛠️")
+		myFigure.Print()
+		fmt.Println("🛠️                                                 🛠️")
+		
+		color.Cyan("1. Sign Up\n")
+		color.Cyan("2. Login\n")
+		color.Cyan("3. Exit\n\n")
+		color.Blue("Enter your choice:-")
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
