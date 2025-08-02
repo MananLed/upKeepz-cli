@@ -8,9 +8,6 @@ import(
 	"github.com/MananLed/upKeepz-cli/internal/model"
 )
 
-const dataDir = "../../data"
-const userDataFile = dataDir + "/users.json"
-
 type UserRepositoryInterface interface {
 	AddUser(user model.User) error
 	GetUserByID(id string) (*model.User, error)

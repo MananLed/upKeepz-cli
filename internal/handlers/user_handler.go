@@ -9,6 +9,7 @@ import(
 	"github.com/MananLed/upKeepz-cli/internal/service"
 	"github.com/fatih/color"
 	"github.com/common-nighthawk/go-figure"
+	"gitlab.com/david_mbuvi/go_asterisks"
 )
 
 type UserHandler struct{
@@ -46,7 +47,8 @@ func (h *UserHandler) SignUp(){
 	id, _ := reader.ReadString('\n')
 
 	color.Yellow("Password: ")
-	password, _ := reader.ReadString('\n')
+	password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
+	passwordStr := string(password)
 
 	color.Yellow("Role (Admin / MaintenanceOfficer / FlatResident): ")
 	roleStr, _ := reader.ReadString('\n')
@@ -58,7 +60,7 @@ func (h *UserHandler) SignUp(){
 		Email:        strings.TrimSpace(email),
 		MobileNumber: strings.TrimSpace(mobile),
 		ID:           strings.TrimSpace(id),
-		Password:     strings.TrimSpace(password),
+		Password:     strings.TrimSpace(passwordStr),
 		Role:         model.ParseRole(strings.TrimSpace(roleStr)),
 	}
 
@@ -71,7 +73,7 @@ func (h *UserHandler) SignUp(){
 	}
 }
 
-func (h *UserHandler) Login(){
+func (h *UserHandler) Login() *model.User {
 	reader := bufio.NewReader(os.Stdin)
 	myFigure := figure.NewColorFigure("Login","", "blue", false)
 	myFigure.Print()
@@ -89,8 +91,9 @@ func (h *UserHandler) Login(){
 
 	if err != nil{
 		fmt.Println("Login failed:", err)
-		return
+		return nil
 	}
 
 	fmt.Println("Login successful!! Welcome,", user.FirstName)
+	return user
 }
