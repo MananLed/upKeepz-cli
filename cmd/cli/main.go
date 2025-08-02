@@ -9,6 +9,7 @@ import (
 	"github.com/MananLed/upKeepz-cli/internal/handlers"
 	"github.com/MananLed/upKeepz-cli/internal/repository"
 	"github.com/MananLed/upKeepz-cli/internal/service"
+	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/fatih/color"
 	"github.com/common-nighthawk/go-figure"
 )
@@ -19,6 +20,10 @@ func main(){
 	userService := service.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)
 
+	societyRepo := &repository.SocietyRepository{}
+    societyService := service.NewSocietyService(societyRepo)
+    societyHandler := handlers.NewSocietyHandler(societyService)
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for{
@@ -26,7 +31,7 @@ func main(){
 		fmt.Println("🛠️                                                 🛠️")
 		myFigure.Print()
 		fmt.Println("🛠️                                                 🛠️")
-		
+
 		color.Cyan("1. Sign Up\n")
 		color.Cyan("2. Login\n")
 		color.Cyan("3. Exit\n\n")
@@ -39,7 +44,14 @@ func main(){
 		case "1":
 			userHandler.SignUp()
 		case "2":
-			userHandler.Login()
+			user := userHandler.Login()
+			if user == nil {continue}
+			switch user.Role {
+			case model.RoleAdmin:
+				ShowAdminDashboard(user, societyHandler)
+			default:
+				fmt.Println("Logged in as", user.Role)
+			}
 		case "3":
 			fmt.Println("Exit")
 			return
