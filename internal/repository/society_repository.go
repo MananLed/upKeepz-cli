@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"os"
+	"fmt"
 	"github.com/MananLed/upKeepz-cli/internal/model"
 )
 
@@ -38,12 +39,14 @@ func (s *SocietyRepository) GetAllResidents() ([]model.User, error){
 	}
 
 	var residents []model.User 
-
+	var count int = 0
 	for _, user := range users{
 		if user.Role == model.RoleResident {
+			count++
 			residents = append(residents, user)
 		}
 	}
+	fmt.Println("Total Residents:", count)
 	return residents, nil 
 }
 
@@ -55,12 +58,14 @@ func (s *SocietyRepository) GetAllOfficers() ([]model.User, error){
 	}
 
 	var officers []model.User 
-
+	var count int = 0
 	for _, user := range users{
 		if user.Role == model.RoleOfficer {
+			count++
 			officers = append(officers, user)
 		}
 	}
+	fmt.Println("Total Officers:", count)
 	return officers, nil
 }
 
