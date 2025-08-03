@@ -82,8 +82,7 @@ func (h *UserHandler) SignUp(){
 
 	lastName := PromptRequired("Last Name", reader)
 
-	color.Yellow("Email: ")
-	email, _ := reader.ReadString('\n')
+	email := PromptRequired("Email", reader)
 
 	mobile := PromptRequired("Mobile Number", reader)
 	for{
@@ -97,12 +96,25 @@ func (h *UserHandler) SignUp(){
 
 	var passwordStr string
 	for {
-		color.Yellow("Password")
+		color.Yellow("Password: ")
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		passwordStr = string(password)
 
 		if passwordStr == "" {
 			color.Red("Password is compulsory")
+			continue
+		}
+		break
+	}
+
+	var confirmPasswordStr string
+	for {
+		color.Yellow("Confirm Password: ")
+		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
+		confirmPasswordStr = string(password)
+
+		if passwordStr != confirmPasswordStr {
+			color.Red("Password does'nt match")
 			continue
 		}
 		break
@@ -131,7 +143,7 @@ func (h *UserHandler) SignUp(){
 	err := h.UserService.SignUp(user)
 
 	if err != nil{
-		fmt.Println("Sign up failed: ", err)
+		color.Red("Sign up failed: %v", err)
 	}else {
 		fmt.Println("User signed up successfully!!")
 	}
@@ -177,7 +189,7 @@ func (h *UserHandler) Login() *model.User {
 	user, err := h.UserService.Login(id, passwordStr)
 
 	if err != nil{
-		fmt.Println("Login failed:", err)
+		color.Red("Login failed: %v", err)
 		return nil
 	}
 

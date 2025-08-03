@@ -21,7 +21,7 @@ func (r *UserRepository) LoadUsers() ([]model.User, error){
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	file, err := os.Open(userDataFile)
+	data, err := os.ReadFile(userDataFile)
 
 	if err != nil{
 		if os.IsNotExist(err){
@@ -29,10 +29,9 @@ func (r *UserRepository) LoadUsers() ([]model.User, error){
 		}
 		return nil, err 
 	}
-	defer file.Close()
-
+	
 	var users []model.User
-	err = json.NewDecoder(file).Decode(&users)
+	err = json.Unmarshal(data, &users)
 	if err != nil{
 		return nil, err 
 	}
@@ -44,17 +43,11 @@ func (r *UserRepository) SaveUsers(users []model.User) error{
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	_ = os.MkdirAll(dataDir, os.ModePerm)
-
-	file, err := os.Create(userDataFile)
-	if err != nil {
+	data, err := json.MarshalIndent(users, ""," ")
+	if err != nil{
 		return err
 	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ") 
-	return encoder.Encode(users)
+	return os.WriteFile(userDataFile, data, 0644)
 }
 
 func (r *UserRepository) GetUserByID(id string) (*model.User, error) {

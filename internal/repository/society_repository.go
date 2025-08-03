@@ -15,19 +15,21 @@ type SocietyRepositoryInterface interface{
 }
 
 func (s *SocietyRepository) GetAllUsers() ([]model.User, error){
-	file, err := os.Open(userDataFile)
+	
+	data, err := os.ReadFile(userDataFile)
 
 	if err != nil{
 		return nil, err 
 	}
     
-	defer file.Close()
-
 	var users []model.User
 
-	if err := json.NewDecoder(file).Decode(&users); err != nil {
-		return nil, err 
+	err = json.Unmarshal(data, &users)
+
+	if err != nil{
+		return nil, err
 	}
+
 	return users, nil 
 }
 
