@@ -6,6 +6,7 @@ import(
 	"os"
 	"sync"
 	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/MananLed/upKeepz-cli/constants"
 )
 
 type UserRepositoryInterface interface {
@@ -21,7 +22,7 @@ func (r *UserRepository) LoadUsers() ([]model.User, error){
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	data, err := os.ReadFile(userDataFile)
+	data, err := os.ReadFile(string(constants.UserDataPath))
 
 	if err != nil{
 		if os.IsNotExist(err){
@@ -47,7 +48,7 @@ func (r *UserRepository) SaveUsers(users []model.User) error{
 	if err != nil{
 		return err
 	}
-	return os.WriteFile(userDataFile, data, 0644)
+	return os.WriteFile(string(constants.UserDataPath), data, 0644)
 }
 
 func (r *UserRepository) GetUserByID(id string) (*model.User, error) {

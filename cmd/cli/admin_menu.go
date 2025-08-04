@@ -1,3 +1,4 @@
+
 package main
 
 import(
@@ -9,20 +10,21 @@ import(
 	"github.com/MananLed/upKeepz-cli/internal/handlers"
 	"github.com/fatih/color"
 	"github.com/common-nighthawk/go-figure"
+	"github.com/MananLed/upKeepz-cli/constants"
 )
 
 func ShowAdminDashboard(user *model.User, handler *handlers.SocietyHandler) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Println("🔐                                       🔐")
+		fmt.Println(constants.AdminEmogiPrompt)
 		myFigure := figure.NewColorFigure("Admin","", "green", false)
 		myFigure.Print()
-		fmt.Println("🔐                                       🔐")
-		color.Cyan("1. View All Residents")
-		color.Cyan("2. View All Officers")
-		color.Cyan("3. Logout")
-		color.Blue("Choose an option: ")
+		fmt.Println(constants.AdminEmogiPrompt)
+		color.Cyan(string(constants.ViewResidentPrompt))
+		color.Cyan(string(constants.ViewOfficersPrompt))
+		color.Cyan(string(constants.LogoutPrompt))
+		color.Blue(string(constants.ChoicePrompt))
 
 		choice, _ := reader.ReadString('\n')
 		choice = strings.TrimSpace(choice)
@@ -33,10 +35,10 @@ func ShowAdminDashboard(user *model.User, handler *handlers.SocietyHandler) {
 		case "2":
 			handler.HandleViewOfficers(*user)
 		case "3":
-			fmt.Println("Logging out...\n")
+			color.Red("Logging out...")
 			return
 		default:
-			fmt.Println("Invalid choice, try again.")
+			color.Red("Invalid choice, try again.")
 		}
 	}
 }

@@ -8,6 +8,7 @@ import(
 	"unicode"
 	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/MananLed/upKeepz-cli/internal/service"
+	"github.com/MananLed/upKeepz-cli/constants"
 	"github.com/fatih/color"
 	"github.com/common-nighthawk/go-figure"
 	"gitlab.com/david_mbuvi/go_asterisks"
@@ -70,33 +71,33 @@ func isAllDigits(s string) bool {
 func (h *UserHandler) SignUp(){
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("📝                                                📝")
+	fmt.Println(constants.SignUpEmogiPrompt)
 	myFigure := figure.NewColorFigure("Sign Up","", "purple", false)
 	myFigure.Print()
-	fmt.Println("📝                                                📝")
+	fmt.Println(constants.SignUpEmogiPrompt)
 
-	firstName := PromptRequired("First Name", reader)
+	firstName := PromptRequired(string(constants.FirstNamePrompt), reader)
 
-	color.Yellow("Middle Name (optional): ")
+	color.Yellow(string(constants.MiddleNamePrompt))
 	middleName, _ := reader.ReadString('\n')
 
-	lastName := PromptRequired("Last Name", reader)
+	lastName := PromptRequired(string(constants.LastNamePrompt), reader)
 
-	email := PromptRequired("Email", reader)
+	email := PromptRequired(string(constants.EmailPrompt), reader)
 
-	mobile := PromptRequired("Mobile Number", reader)
+	mobile := PromptRequired(string(constants.MobilePrompt), reader)
 	for{
 		if ValidateMobileNumber(mobile) {
 			break
 		}
-		mobile = PromptRequired("Mobile Number", reader)
+		mobile = PromptRequired(string(constants.MobilePrompt), reader)
 	}
 
-	id := PromptRequired("ID (Username)", reader)
+	id := PromptRequired(string(constants.IDPrompt), reader)
 
 	var passwordStr string
 	for {
-		color.Yellow("Password: ")
+		color.Yellow(string(constants.PasswordPrompt))
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		passwordStr = string(password)
 
@@ -109,7 +110,7 @@ func (h *UserHandler) SignUp(){
 
 	var confirmPasswordStr string
 	for {
-		color.Yellow("Confirm Password: ")
+		color.Yellow(string(constants.ConfirmPasswordPrompt))
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		confirmPasswordStr = string(password)
 
@@ -120,13 +121,13 @@ func (h *UserHandler) SignUp(){
 		break
 	}
 
-	roleStr := PromptRequired("Role (Admin / MaintenanceOfficer / FlatResident)", reader)
+	roleStr := PromptRequired(string(constants.RolePrompt), reader)
 	for{
 		if roleStr == "Admin" || roleStr == "MaintenanceOfficer" || roleStr == "FlatResident"{
 			break
 		}
 		color.Red("Invalid Role")
-		roleStr = PromptRequired("Role (Admin / MaintenanceOfficer / FlatResident)", reader)
+		roleStr = PromptRequired(string(constants.RolePrompt), reader)
 	}
 
 	user := model.User{
@@ -145,17 +146,17 @@ func (h *UserHandler) SignUp(){
 	if err != nil{
 		color.Red("Sign up failed: %v", err)
 	}else {
-		fmt.Println("User signed up successfully!!")
+		color.Green("User signed up successfully!!")
 	}
 }
 
 func (h *UserHandler) Login() *model.User {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("🧑‍💻                                          🧑‍💻")
+	fmt.Println(constants.LoginEmogiPrompt)
 	myFigure := figure.NewColorFigure("Login","", "blue", false)
 	myFigure.Print()
-	fmt.Println("🧑‍💻                                          🧑‍💻")
+	fmt.Println(constants.LoginEmogiPrompt)
 
 	var id string
 	for {
@@ -193,6 +194,6 @@ func (h *UserHandler) Login() *model.User {
 		return nil
 	}
 
-	fmt.Println("Login successful!! Welcome,", user.FirstName)
+	color.Green("Login successful!! Welcome,", user.FirstName)
 	return user
 }

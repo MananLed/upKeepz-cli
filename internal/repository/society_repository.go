@@ -5,6 +5,7 @@ import (
 	"os"
 	"fmt"
 	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/MananLed/upKeepz-cli/constants"
 )
 
 type SocietyRepository struct{}
@@ -16,7 +17,7 @@ type SocietyRepositoryInterface interface{
 
 func (s *SocietyRepository) GetAllUsers() ([]model.User, error){
 	
-	data, err := os.ReadFile(userDataFile)
+	data, err := os.ReadFile(string(constants.UserDataPath))
 
 	if err != nil{
 		return nil, err 
@@ -70,6 +71,3 @@ func (s *SocietyRepository) GetAllOfficers() ([]model.User, error){
 	fmt.Println("Total Officers:", count)
 	return officers, nil
 }
-
-
-

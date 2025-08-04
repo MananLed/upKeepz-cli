@@ -12,6 +12,7 @@ import (
 	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/fatih/color"
 	"github.com/common-nighthawk/go-figure"
+	"github.com/MananLed/upKeepz-cli/constants"
 )
 
 func main(){
@@ -28,14 +29,14 @@ func main(){
 
 	for{
 		myFigure := figure.NewColorFigure("UpKeepz","", "green", false)
-		fmt.Println("🛠️                                                 🛠️")
+		fmt.Println(constants.AppEmogiPrompt)
 		myFigure.Print()
-		fmt.Println("🛠️                                                 🛠️")
+		fmt.Println(constants.AppEmogiPrompt)
 
-		color.Cyan("1. Sign Up\n")
-		color.Cyan("2. Login\n")
-		color.Cyan("3. Exit\n\n")
-		color.Blue("Enter your choice:-")
+		color.Cyan(string(constants.SignUpPrompt))
+		color.Cyan(string(constants.LoginPrompt))
+		color.Cyan(string(constants.ExitPrompt))
+		color.Blue(string(constants.ChoicePrompt))
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
@@ -50,13 +51,13 @@ func main(){
 			case model.RoleAdmin:
 				ShowAdminDashboard(user, societyHandler)
 			default:
-				fmt.Println("Logged in as", user.Role)
+				color.Green("Logged in as", user.Role)
 			}
 		case "3":
-			fmt.Println("Exit")
+			color.Red("Exit")
 			return
 		default:
-			fmt.Println("Invalid choice. Please try again.")
+			color.Red("Invalid choice. Please try again.")
 		}
 	}
 }
