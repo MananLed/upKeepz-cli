@@ -4,12 +4,12 @@ type Prompt string
 type Path string
 
 const(
-	ViewResidentPrompt Prompt = "1. View All Residents"
-	ViewOfficersPrompt Prompt = "2. View All Officers"
-	LogoutPrompt Prompt  = "3. Logout"
-	SignUpPrompt Prompt = "1. Sign Up"
-	LoginPrompt Prompt = "2. Login"
-	ExitPrompt Prompt = "3. Exit\n\n"
+	ViewResidentPrompt Prompt = "View All Residents"
+	ViewOfficersPrompt Prompt = "View All Officers"
+	LogoutPrompt Prompt  = "Logout"
+	SignUpPrompt Prompt = "Sign Up"
+	LoginPrompt Prompt = "Login"
+	ExitPrompt Prompt = "Exit\n\n"
 	FirstNamePrompt Prompt = "First Name"
 	MiddleNamePrompt Prompt = "Middle Name (optional):"
 	LastNamePrompt Prompt = "Last Name"
@@ -24,7 +24,12 @@ const(
 	LoginEmogiPrompt Prompt = "🧑‍💻                                          🧑‍💻"
 	AppEmogiPrompt Prompt = "🛠️                                                 🛠️"
 	AdminEmogiPrompt Prompt = "🔐                                       🔐"
-	
+	DeleteResidentPrompt Prompt = "Delete Resident Credentials"
+	DeleteOfficerPrompt Prompt = "Delete Officer Credentials"
+	IssueNoticePrompt Prompt = "Issue Notice"
+	GetNoticePrompt Prompt = "Get Notices"
+	GetNoticeByID Prompt = "Get Notice By ID"
 	MainDataPath Path = "../../data"
 	UserDataPath Path = MainDataPath + "/users.json" 
+	NoticeDataPath Path = MainDataPath + "/notices.json"
 )

@@ -1,5 +1,9 @@
 package utils
 
-type contextKey string 
+type contextKey string
 
-const UserContextKey contextKey = "user"
+const (
+	UserIDKey     contextKey = "user_id"
+	UserRoleKey   contextKey = "user_role"
+	UserPassKey   contextKey = "user_pass"
+)

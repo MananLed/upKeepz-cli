@@ -7,12 +7,25 @@ import (
 	"github.com/MananLed/upKeepz-cli/internal/model"
 )
 
-func GetUserFromContext(ctx context.Context) (*model.User, error){
-	user, ok := ctx.Value(UserContextKey).(*model.User)
-
-	if !ok || user == nil{
-		return nil, errors.New("user not found in context")
+func GetUserFromContext(ctx context.Context) (*model.User, error) {
+	id, ok := ctx.Value(UserIDKey).(string)
+	if !ok || id == "" {
+		return nil, errors.New("user ID not found in context")
 	}
 
-	return user, nil
+	role, ok := ctx.Value(UserRoleKey).(model.UserRole)
+	if !ok {
+		return nil, errors.New("user role not found in context")
+	}
+
+	password, ok := ctx.Value(UserPassKey).(string)
+	if !ok || password == "" {
+		return nil, errors.New("user password not found in context")
+	}
+
+	return &model.User{
+		ID:       id,
+		Password: password,
+		Role:     role,
+	}, nil
 }

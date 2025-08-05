@@ -18,9 +18,9 @@ const(
 )
 
 type ServiceRequest struct {
-	requestID   string
-	residentID  string
-	status      Status
-	timeSlot    string
-	serviceType ServiceType
+	RequestID   string
+	ResidentID  string
+	Status      Status
+	TimeSlot    string
+	ServiceType ServiceType
 }

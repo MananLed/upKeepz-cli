@@ -1,7 +1,7 @@
 package model
 
 type Notice struct {
-	id         int
-	dateIssued string 
-	content    string
+	ID         int
+	DateIssued string 
+	Content    string
 }

@@ -1,172 +1,131 @@
 package service
 
-import(
+import (
+	"context"
 	"testing"
+
 	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/MananLed/upKeepz-cli/internal/utils"
 )
 
-type MockSocietyRepo struct{
-	Users []model.User 
+type MockSocietyRepo struct {
+	Users []model.User
 }
 
-func (m *MockSocietyRepo) GetAllResidents() ([]model.User, error){
+func (m *MockSocietyRepo) GetAllResidents() ([]model.User, error) {
 	var residents []model.User
 	for _, u := range m.Users {
-		if u.Role == model.RoleResident{
+		if u.Role == model.RoleResident {
 			residents = append(residents, u)
 		}
 	}
 	return residents, nil
 }
 
-func (m *MockSocietyRepo) GetAllOfficers() ([]model.User, error){
+func (m *MockSocietyRepo) GetAllOfficers() ([]model.User, error) {
 	var officers []model.User
 	for _, u := range m.Users {
-		if u.Role == model.RoleOfficer{
+		if u.Role == model.RoleOfficer {
 			officers = append(officers, u)
 		}
 	}
 	return officers, nil
 }
 
-func TestGetAllResidentsAsAdmin(t *testing.T){
+func ctxWithUser(user *model.User) context.Context {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, utils.UserIDKey, user.ID)
+	ctx = context.WithValue(ctx, utils.UserRoleKey, user.Role)
+	ctx = context.WithValue(ctx, utils.UserPassKey, user.Password)
+	return ctx
+}
+
+func TestGetAllResidentsAsAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{
-		Users : []model.User{
+		Users: []model.User{
 			{
-				FirstName:    "Meera",
-    			MiddleName:   "Rani",
-				LastName:     "Verma",
-				MobileNumber: "9123456789",
-				Email:        "meera.verma@example.com",
-				ID:           "r1",
-				Password:     "Pass#456",
-				Role:         model.RoleResident,
-			},	
+				ID:    "r1",
+				Role:  model.RoleResident,
+				Email: "resident@example.com",
+			},
 			{
-				
-				FirstName:    "Rohan",
-				MiddleName:   "Dev",
-				LastName:     "Patel",
-				MobileNumber: "9988776655",
-				Email:        "rohan.patel@example.com",
-				ID:           "o1",
-				Password:     "MyPass789!",
-				Role:         model.RoleOfficer,
+				ID:    "o1",
+				Role:  model.RoleOfficer,
+				Email: "officer@example.com",
 			},
 		},
 	}
 
 	service := NewSocietyService(mockRepo)
 
-	admin := model.User{
-		
-		FirstName:    "Aarav",
-    	MiddleName:   "Kumar",
-		LastName:     "Sharma",
-		MobileNumber: "9876543210",
-		Email:        "aarav.sharma@example.com",
-		ID:           "a1",
-		Password:     "Secure@123",
-		Role:         model.RoleAdmin, 
-	}
+	admin := &model.User{ID: "a1",Password: "n1", Role: model.RoleAdmin}
+	ctx := ctxWithUser(admin)
 
-	residents, err := service.GetAllResidents(admin)
-
+	residents, err := service.GetAllResidents(ctx)
 	if err != nil {
-		t.Fatalf("expected residents list but got error %v", residents)
+		t.Fatalf("expected success, got error: %v", err)
 	}
 	if len(residents) != 1 || residents[0].ID != "r1" {
 		t.Errorf("unexpected residents list: %v", residents)
 	}
 }
 
-func TestGetAllOfficersAsAdmin(t *testing.T){
+func TestGetAllOfficersAsAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{
-		Users : []model.User{
-			{
-				FirstName:    "Meera",
-    			MiddleName:   "Rani",
-				LastName:     "Verma",
-				MobileNumber: "9123456789",
-				Email:        "meera.verma@example.com",
-				ID:           "r1",
-				Password:     "Pass#456",
-				Role:         model.RoleResident,
-			},	
-			{
-				FirstName:    "Rohan",
-				MiddleName:   "Dev",
-				LastName:     "Patel",
-				MobileNumber: "9988776655",
-				Email:        "rohan.patel@example.com",
-				ID:           "o1",
-				Password:     "MyPass789!",
-				Role:         model.RoleOfficer,
-			},
+		Users: []model.User{
+			{ID: "r1", Role: model.RoleResident},
+			{ID: "o1", Role: model.RoleOfficer},
 		},
 	}
 
 	service := NewSocietyService(mockRepo)
 
-	admin := model.User{
-		FirstName:    "Aarav",
-    	MiddleName:   "Kumar",
-		LastName:     "Sharma",
-		MobileNumber: "9876543210",
-		Email:        "aarav.sharma@example.com",
-		ID:           "a1",
-		Password:     "Secure@123",
-		Role:         model.RoleAdmin, 
-	}
+	admin := &model.User{ID: "a1",Password: "n1", Role: model.RoleAdmin}
+	ctx := ctxWithUser(admin)
 
-	officers, err := service.GetAllOfficers(admin)
-
+	officers, err := service.GetAllOfficers(ctx)
 	if err != nil {
-		t.Fatalf("expected officers list but got error %v", officers)
+		t.Fatalf("expected success, got error: %v", err)
 	}
 	if len(officers) != 1 || officers[0].ID != "o1" {
-		t.Errorf("unexpected residents list: %v", officers)
+		t.Errorf("unexpected officers list: %v", officers)
 	}
 }
 
-func TestGetAllResidentsAsNonAdmin(t *testing.T){
+func TestGetAllResidentsAsNonAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{}
 	service := NewSocietyService(mockRepo)
 
-	officer := model.User{
-				FirstName:    "Rohan",
-				MiddleName:   "Dev",
-				LastName:     "Patel",
-				MobileNumber: "9988776655",
-				Email:        "rohan.patel@example.com",
-				ID:           "o1",
-				Password:     "MyPass789!",
-				Role:         model.RoleOfficer,
-			}
+	officer := &model.User{ID: "o1",Password: "n2", Role: model.RoleOfficer}
+	ctx := ctxWithUser(officer)
 
-	_, err := service.GetAllResidents(officer)
+	_, err := service.GetAllResidents(ctx)
 	if err == nil {
 		t.Error("expected error for non-admin user")
 	}
 }
 
-func TestGettAllOfficersAsNonAdmin(t *testing.T){
+func TestGetAllOfficersAsNonAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{}
 	service := NewSocietyService(mockRepo)
 
-	resident := model.User{
-				FirstName:    "Meera",
-    			MiddleName:   "Rani",
-				LastName:     "Verma",
-				MobileNumber: "9123456789",
-				Email:        "meera.verma@example.com",
-				ID:           "r1",
-				Password:     "Pass#456",
-				Role:         model.RoleResident,
-	}
-	
-	_, err := service.GetAllOfficers(resident)
+	resident := &model.User{ID: "r1",Password: "n3", Role: model.RoleResident}
+	ctx := ctxWithUser(resident)
+
+	_, err := service.GetAllOfficers(ctx)
 	if err == nil {
 		t.Error("expected error for non-admin user")
+	}
+}
+
+func TestMissingUserInContext(t *testing.T) {
+	mockRepo := &MockSocietyRepo{}
+	service := NewSocietyService(mockRepo)
+
+	ctx := context.Background()
+
+	_, err := service.GetAllResidents(ctx)
+	if err == nil {
+		t.Error("expected error due to missing user in context")
 	}
 }

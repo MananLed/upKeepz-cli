@@ -1,23 +1,30 @@
 package handlers
 
-import(
+import (
+	"context"
 	"fmt"
-	"github.com/MananLed/upKeepz-cli/internal/model"
+
 	"github.com/MananLed/upKeepz-cli/internal/service"
+	"github.com/MananLed/upKeepz-cli/internal/utils"
 )
 
-type SocietyHandler struct{
-	SocietyService *service.SocietyService 
+type SocietyHandler struct {
+	SocietyService *service.SocietyService
 }
 
 func NewSocietyHandler(serve *service.SocietyService) *SocietyHandler {
 	return &SocietyHandler{SocietyService: serve}
 }
 
-func (h *SocietyHandler) HandleViewResidents(currentUser model.User){
-	residents, err := h.SocietyService.GetAllResidents(currentUser)
+func (h *SocietyHandler) HandleViewResidents(ctx context.Context) {
+	_, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	if err != nil{
+	residents, err := h.SocietyService.GetAllResidents(ctx)
+	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
@@ -28,8 +35,14 @@ func (h *SocietyHandler) HandleViewResidents(currentUser model.User){
 	}
 }
 
-func (h *SocietyHandler) HandleViewOfficers(currentUser model.User) {
-	officers, err := h.SocietyService.GetAllOfficers(currentUser)
+func (h *SocietyHandler) HandleViewOfficers(ctx context.Context) {
+	_, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	officers, err := h.SocietyService.GetAllOfficers(ctx)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

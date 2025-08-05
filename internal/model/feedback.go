@@ -1,8 +1,8 @@
 package model
 
 type Feedback struct{
-	requestID string 
-	residentID string 
-	rating int
-	text string 
+	RequestID string 
+	ResidentID string 
+	Rating int
+	Text string 
 }

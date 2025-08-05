@@ -1,57 +1,139 @@
+// package main
+
+// import (
+// 	"bufio"
+// 	"fmt"
+// 	"os"
+// 	"strings"
+
+// 	"github.com/MananLed/upKeepz-cli/internal/handlers"
+// 	"github.com/MananLed/upKeepz-cli/internal/repository"
+// 	"github.com/MananLed/upKeepz-cli/internal/service"
+// 	"github.com/MananLed/upKeepz-cli/internal/model"
+// 	"github.com/fatih/color"
+// 	"github.com/common-nighthawk/go-figure"
+// 	"github.com/MananLed/upKeepz-cli/constants"
+// )
+
+// func main(){
+
+// 	userRepo := &repository.UserRepository{}
+// 	userService := service.NewUserService(userRepo)
+// 	userHandler := handlers.NewUserHandler(userService)
+
+// 	societyRepo := &repository.SocietyRepository{}
+//     societyService := service.NewSocietyService(societyRepo)
+//     societyHandler := handlers.NewSocietyHandler(societyService)
+
+// 	reader := bufio.NewReader(os.Stdin)
+
+// 	for{
+// 		myFigure := figure.NewColorFigure("UpKeepz","", "green", false)
+// 		fmt.Println(constants.AppEmogiPrompt)
+// 		myFigure.Print()
+// 		fmt.Println(constants.AppEmogiPrompt)
+
+// 		color.Cyan(string(constants.SignUpPrompt))
+// 		color.Cyan(string(constants.LoginPrompt))
+// 		color.Cyan(string(constants.ExitPrompt))
+// 		color.Blue(string(constants.ChoicePrompt))
+
+// 		input, _ := reader.ReadString('\n')
+// 		choice := strings.TrimSpace(input)
+
+// 		switch choice{
+// 		case "1":
+// 			userHandler.SignUp()
+// 		case "2":
+// 			user := userHandler.Login()
+// 			if user == nil {continue}
+// 			switch user.Role {
+// 			case model.RoleAdmin:
+// 				ShowAdminDashboard(user, societyHandler)
+// 			default:
+// 				color.Green("Logged in as", user.Role)
+// 			}
+// 		case "3":
+// 			color.Red("Exit")
+// 			return
+// 		default:
+// 			color.Red("Invalid choice. Please try again.")
+// 		}
+// 	}
+// }
+
 package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"strings"
 
+	"github.com/MananLed/upKeepz-cli/constants"
 	"github.com/MananLed/upKeepz-cli/internal/handlers"
+	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/MananLed/upKeepz-cli/internal/repository"
 	"github.com/MananLed/upKeepz-cli/internal/service"
-	"github.com/MananLed/upKeepz-cli/internal/model"
-	"github.com/fatih/color"
+	"github.com/MananLed/upKeepz-cli/internal/utils"
+
 	"github.com/common-nighthawk/go-figure"
-	"github.com/MananLed/upKeepz-cli/constants"
+	"github.com/fatih/color"
 )
 
-func main(){
-
+func main() {
 	userRepo := &repository.UserRepository{}
 	userService := service.NewUserService(userRepo)
 	userHandler := handlers.NewUserHandler(userService)
 
 	societyRepo := &repository.SocietyRepository{}
-    societyService := service.NewSocietyService(societyRepo)
-    societyHandler := handlers.NewSocietyHandler(societyService)
+	societyService := service.NewSocietyService(societyRepo)
+	societyHandler := handlers.NewSocietyHandler(societyService)
+
+	credentialRepo := &repository.CredentialRepository{}
+	credentialService := service.NewCredentialService(credentialRepo)
+	credentialHandler := handlers.NewCredentialHandler(credentialService)
+
+	noticeRepo := &repository.NoticeRepository{}
+	noticeService := service.NewNoticeService(noticeRepo)
+	noticeHandler := handlers.NewNoticeHandler(noticeService)
 
 	reader := bufio.NewReader(os.Stdin)
 
-	for{
-		myFigure := figure.NewColorFigure("UpKeepz","", "green", false)
+	for {
+		myFigure := figure.NewColorFigure("UpKeepz", "", "green", false)
 		fmt.Println(constants.AppEmogiPrompt)
 		myFigure.Print()
 		fmt.Println(constants.AppEmogiPrompt)
 
-		color.Cyan(string(constants.SignUpPrompt))
-		color.Cyan(string(constants.LoginPrompt))
-		color.Cyan(string(constants.ExitPrompt))
-		color.Blue(string(constants.ChoicePrompt))
+		color.Cyan("1." + string(constants.SignUpPrompt))
+		color.Cyan("2." + string(constants.LoginPrompt))
+		color.Cyan("3." + string(constants.ExitPrompt))
+		color.Blue("4." + string(constants.ChoicePrompt))
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
 
-		switch choice{
+		switch choice {
 		case "1":
 			userHandler.SignUp()
 		case "2":
 			user := userHandler.Login()
-			if user == nil {continue}
+			if user == nil {
+				continue
+			}
+
+			ctx := context.Background()
+			ctx = context.WithValue(ctx, utils.UserIDKey, user.ID)
+			ctx = context.WithValue(ctx, utils.UserRoleKey, user.Role)
+			ctx = context.WithValue(ctx, utils.UserPassKey, user.Password)
+
 			switch user.Role {
 			case model.RoleAdmin:
-				ShowAdminDashboard(user, societyHandler)
+				ShowAdminDashboard(ctx, societyHandler, credentialHandler, noticeHandler)
 			default:
-				color.Green("Logged in as", user.Role)
+				color.Green("Logged in as %s", user.Role)
 			}
 		case "3":
 			color.Red("Exit")
