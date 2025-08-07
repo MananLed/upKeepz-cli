@@ -60,7 +60,7 @@ func (s *ServiceRequestService) RescheduleServiceRequest(userID, requestID strin
 				return errors.New("cannot reschedule a cancelled or approved request")
 			}
 
-			allRequests[i].TimeSlot = fmt.Sprintf("%s - %s", newStart.Format("3:04 PM"), newEnd.Format("3:04 PM"))
+			allRequests[i].TimeSlot = fmt.Sprintf("%s - %s", newStart.Format("1:34 PM"), newEnd.Format("1:34 PM"))
 			allRequests[i].StartTime = newStart
 			allRequests[i].EndTime = newEnd
 			allRequests[i].ServiceType = newService

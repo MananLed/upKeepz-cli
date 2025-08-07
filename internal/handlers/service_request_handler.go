@@ -28,18 +28,18 @@ func (h *ServiceRequestHandler) BookServiceRequest(ctx context.Context) {
 
 	fmt.Print(color.YellowString("Enter service type (electrician/plumber): "))
 
-	serviceTypeInput, _ := reader.ReadString('\n')
-	serviceTypeInput = strings.ToLower(strings.TrimSpace(serviceTypeInput))
+	serviceType, _ := reader.ReadString('\n')
+	serviceType = strings.ToLower(strings.TrimSpace(serviceType))
 
 	for{
-		if serviceTypeInput != string(model.Electrician) && serviceTypeInput != string(model.Plumber){
+		if serviceType != string(model.Electrician) && serviceType != string(model.Plumber){
 			color.Red("Invalid service type, enter correct service type")
 		} else{break}
-		serviceTypeInput, _ = reader.ReadString('\n')
-		serviceTypeInput = strings.ToLower(strings.TrimSpace(serviceTypeInput))
+		serviceType, _ = reader.ReadString('\n')
+		serviceType = strings.ToLower(strings.TrimSpace(serviceType))
 	}
 
-	availableSlots := h.ServiceRequestService.GetAvailableTimeSlots(model.ServiceType(serviceTypeInput))
+	availableSlots := h.ServiceRequestService.GetAvailableTimeSlots(model.ServiceType(serviceType))
 
 	if len(availableSlots) == 0 {
 		color.Red("No available time slots.")
@@ -62,10 +62,10 @@ func (h *ServiceRequestHandler) BookServiceRequest(ctx context.Context) {
 		RequestID:   requestID,
 		ResidentID:  user.ID,
 		Status:      model.StatusPending,
-		TimeSlot:    fmt.Sprintf("%s to %s", chosenSlot.StartTime.Format("3:04 PM"), chosenSlot.EndTime.Format("3:04 PM")),
+		TimeSlot:    fmt.Sprintf("%s to %s", chosenSlot.StartTime.Format("2:34 PM"), chosenSlot.EndTime.Format("2:34 PM")),
 		StartTime:   chosenSlot.StartTime,
 		EndTime:     chosenSlot.EndTime,
-		ServiceType: model.ServiceType(serviceTypeInput),
+		ServiceType: model.ServiceType(serviceType),
 	}
 
 	if err := h.ServiceRequestService.BookServiceRequest(request); err != nil {

@@ -259,11 +259,6 @@ func (h *UserHandler) UpdateProfile(user *model.User) {
 		user.ID = email
 	}
 
-	// fmt.Print(color.YellowString("Enter Password: "))
-	// password, _ := reader.ReadString('\n')
-	// password = strings.TrimSpace(password)
-	// password = strings.TrimRight(password, "\r\n")
-
 
 	if err := h.UserService.UpdateProfile(*user); err != nil {
 		color.Red("Failed to update profile: %v", err)
