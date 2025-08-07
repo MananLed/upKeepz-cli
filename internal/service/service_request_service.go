@@ -56,8 +56,8 @@ func (s *ServiceRequestService) RescheduleServiceRequest(userID, requestID strin
 	updated := false
 	for i, r := range allRequests {
 		if r.RequestID == requestID && r.ResidentID == userID {
-			if r.Status == model.StatusCancelled || r.Status == model.StatusCompleted {
-				return errors.New("cannot reschedule a cancelled or completed request")
+			if r.Status == model.StatusCancelled || r.Status == model.StatusApproved {
+				return errors.New("cannot reschedule a cancelled or approved request")
 			}
 
 			allRequests[i].TimeSlot = fmt.Sprintf("%s - %s", newStart.Format("3:04 PM"), newEnd.Format("3:04 PM"))
@@ -86,8 +86,10 @@ func (s *ServiceRequestService) CancelServiceRequest(userID, requestID string) e
 	cancelled := false
 	for i, r := range allRequests {
 		if r.RequestID == requestID && r.ResidentID == userID {
-			if r.Status == model.StatusCancelled {
+			if r.Status == model.StatusCancelled{
 				return errors.New("request already cancelled")
+			} else if r.Status == model.StatusApproved{
+				return errors.New("request is already approved")
 			}
 			allRequests[i].Status = model.StatusCancelled
 			cancelled = true
@@ -148,6 +150,7 @@ func (s *ServiceRequestService) GetServiceTypeByID(requestID string) (model.Serv
 
 	for _, request := range requests {
 		if request.RequestID == requestID {
+			fmt.Println(request.RequestID, requestID)
 			return request.ServiceType, nil
 		}
 	}

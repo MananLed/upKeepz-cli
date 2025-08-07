@@ -34,7 +34,7 @@ func PromptRequired(label string, reader *bufio.Reader) string {
 		fmt.Print(color.YellowString(label) + ": ")
 		input, _ := reader.ReadString('\n')
 		trimmed := strings.TrimSpace(input)
-
+		trimmed = strings.TrimRight(trimmed, "\r\n")
 		if trimmed == "" {
 			color.Red("%s is compulsory", label)
 			continue
@@ -46,31 +46,10 @@ func PromptRequired(label string, reader *bufio.Reader) string {
 func ValidateMobileNumber(mobile string) bool {
 	mobile = strings.TrimSpace(mobile)
 
-	if len(mobile) != 10 {
-		color.Red("Mobile number must be exactly 10 digits.")
-		return false
-	}
+	pattern := `^[6-9][0-9]{9}$`
 
-	if mobile[0] == '0' {
-		color.Red("Mobile number cannot start with 0.")
-		return false
-	}
-
-	if !isAllDigits(mobile) {
-		color.Red("Mobile number must contain only digits.")
-		return false
-	}
-
-	return true
-}
-
-func isAllDigits(s string) bool {
-	for _, r := range s {
-		if !unicode.IsDigit(r) {
-			return false
-		}
-	}
-	return true
+	re := regexp.MustCompile(pattern)
+	return re.MatchString(mobile)
 }
 
 func ValidateEmail(email string) bool {
@@ -119,9 +98,8 @@ func (h *UserHandler) SignUp() {
 
 	firstName := PromptRequired(string(constants.FirstNamePrompt), reader)
 
-	color.Yellow(string(constants.MiddleNamePrompt))
+	fmt.Print(color.YellowString(string(constants.MiddleNamePrompt)))
 	middleName, _ := reader.ReadString('\n')
-
 
 	lastName := PromptRequired(string(constants.LastNamePrompt), reader)
 
@@ -138,8 +116,8 @@ func (h *UserHandler) SignUp() {
 	id := email
 
 	var passwordStr string
-	color.Yellow(string(constants.PasswordPrompt))
 	for {
+		fmt.Print(color.YellowString(string(constants.PasswordPrompt)))
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		passwordStr = string(password)
 
@@ -157,7 +135,7 @@ func (h *UserHandler) SignUp() {
 
 	var confirmPasswordStr string
 	for {
-		color.Yellow(string(constants.ConfirmPasswordPrompt))
+		fmt.Print(color.YellowString(string(constants.ConfirmPasswordPrompt)))
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		confirmPasswordStr = string(password)
 
@@ -218,14 +196,13 @@ func (h *UserHandler) Login() *model.User {
 		fmt.Print(color.YellowString(string(constants.PasswordPrompt)))
 		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
 		passwordStr = string(password)
-
+		passwordStr = strings.TrimRight(passwordStr, "\r\n")
 		if passwordStr == "" {
 			color.Red("Password is required")
 			continue
 		}
 		break
 	}
-
 
 	user, err := h.UserService.Login(id, passwordStr)
 	if err != nil {
@@ -234,7 +211,6 @@ func (h *UserHandler) Login() *model.User {
 	}
 
 	color.Green("Login successful!! Welcome, %s", user.FirstName)
-	if user.Role == model.RoleOfficer && user.Password == "Password@123" {color.Yellow("Please update your profile and change your password to a strong one.")}
 	return user
 }
 
@@ -269,7 +245,7 @@ func (h *UserHandler) UpdateProfile(user *model.User) {
 	fmt.Print(color.YellowString("Update Mobile Number: "))
 	mobile, _ := reader.ReadString('\n')
 	mobile = strings.TrimSpace(mobile)
-    mobile = strings.TrimRight(mobile, "\r\n")
+	mobile = strings.TrimRight(mobile, "\r\n")
 	if mobile != "" && ValidateMobileNumber(mobile) {
 		user.MobileNumber = mobile
 	}
@@ -283,9 +259,15 @@ func (h *UserHandler) UpdateProfile(user *model.User) {
 		user.ID = email
 	}
 
+	// fmt.Print(color.YellowString("Enter Password: "))
+	// password, _ := reader.ReadString('\n')
+	// password = strings.TrimSpace(password)
+	// password = strings.TrimRight(password, "\r\n")
+
+
 	if err := h.UserService.UpdateProfile(*user); err != nil {
-			color.Red("Failed to update profile: %v", err)
-			return
+		color.Red("Failed to update profile: %v", err)
+		return
 	}
 
 	color.Green("Profile updated successfully!")
@@ -343,13 +325,16 @@ func (h *UserHandler) CreateOfficer(ctx context.Context) {
 
 	fmt.Print(color.YellowString("Set temporary password for the officer: "))
 	password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
+	passwordStr := string(password)
+	passwordStr = strings.TrimRight(passwordStr, "\r\n")
+	password = []byte(passwordStr)
 	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 
 	newOfficer := model.User{
-		Email:        email,
-		ID:           email,
-		Password:     string(hashedPassword),
-		Role:         model.RoleOfficer,
+		Email:    email,
+		ID:       email,
+		Password: string(hashedPassword),
+		Role:     model.RoleOfficer,
 	}
 
 	if err := h.UserService.SignUp(newOfficer); err != nil {
@@ -358,4 +343,3 @@ func (h *UserHandler) CreateOfficer(ctx context.Context) {
 		color.Green("Officer created successfully.")
 	}
 }
-

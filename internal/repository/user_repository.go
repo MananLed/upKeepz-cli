@@ -91,7 +91,7 @@ func (r *UserRepository) UpdateUser(updatedUser model.User) error {
 
 	updated := false
 	for i, u := range users {
-		if u.ID == updatedUser.ID {
+		if u.Password == updatedUser.Password {
 			users[i] = updatedUser
 			updated = true
 			break

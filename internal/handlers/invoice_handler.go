@@ -37,7 +37,7 @@ func (h *InvoiceHandler) IssueInvoice(ctx context.Context) {
 	}
 
 	var amount float64
-	color.Cyan("Enter the amount: ")
+	fmt.Print(color.YellowString("Enter the amount: "))
 	fmt.Scanf("%f\n", &amount)
 
 	now := time.Now()
@@ -72,7 +72,7 @@ func (h *InvoiceHandler) GetInvoiceByMonthAndYear() {
 		} else {
 			break
 		}
-		fmt.Scanf("%d", &monthindex)
+		fmt.Scanf("%d\n", &monthindex)
 	}
 
 	month := months[monthindex-1]
@@ -106,7 +106,7 @@ func (h *InvoiceHandler) GetInvoicesByYear() {
 		return
 	}
 
-	color.Green("Invoices:- ")
+	if(len(invoices) > 0) {color.Green("Invoices:- ")}
 	for _, invoice := range invoices {
 		color.White(constants.InvoiceFormatPrompt, invoice.ID, invoice.Amount, invoice.Month, invoice.Year)
 	}

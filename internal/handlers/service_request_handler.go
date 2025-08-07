@@ -85,7 +85,11 @@ func (h *ServiceRequestHandler) RescheduleServiceRequest(ctx context.Context) {
 
 	user, _ := utils.GetUserFromContext(ctx)
 
-	serviceType, _ := h.ServiceRequestService.GetServiceTypeByID(reqID)
+	serviceType, err := h.ServiceRequestService.GetServiceTypeByID(reqID)
+
+	if err != nil{
+		color.Red("Error: User with such ID does not exist")
+	}
 
 	availableSlots := h.ServiceRequestService.GetAvailableTimeSlots(serviceType)
 
@@ -159,7 +163,7 @@ func (h *ServiceRequestHandler) ViewPendingRequestsByServiceType(ctx context.Con
 		color.Red("unauthorized: only officers and admins can access this")
 		return
 	}
-	color.Yellow("Enter the service for which you want to see pending requests (electrician/plumber): ")
+	fmt.Print(color.YellowString("Enter the service for which you want to see pending requests (electrician/plumber): "))
 	reader := bufio.NewReader(os.Stdin)
 	serviceType, _ := reader.ReadString('\n')
 	serviceType = strings.ToLower(strings.TrimSpace(serviceType))
@@ -197,7 +201,7 @@ func (h *ServiceRequestHandler) ViewApprovedRequestsByServiceType(ctx context.Co
 		color.Red("unauthorized: only officers and admins can access this")
 		return
 	}
-	color.Yellow("Enter the service for which you want to see pending requests (electrician/plumber): ")
+	fmt.Print(color.YellowString("Enter the service for which you want to see pending requests (electrician/plumber): "))
 	reader := bufio.NewReader(os.Stdin)
 	serviceType, _ := reader.ReadString('\n')
 	serviceType = strings.ToLower(strings.TrimSpace(serviceType))

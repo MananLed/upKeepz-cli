@@ -104,7 +104,7 @@ func (h *FeedbackHandler) GetFeebacksByResidentID(ctx context.Context) {
 	reader := bufio.NewReader(os.Stdin)
 
 	id, _ := reader.ReadString('\n')
-
+	id = strings.TrimRight(id, "\r\n")
 	feedbacks, err := h.FeedbackService.GetFeedbackByID(id)
 
 	if err != nil {
@@ -112,7 +112,7 @@ func (h *FeedbackHandler) GetFeebacksByResidentID(ctx context.Context) {
 		return
 	}
 
-	color.Green("Feedbacks of %v:-", user.ID)
+	color.Green("Feedbacks of %v:-", id)
 	for _, feedback := range feedbacks {
 		fmt.Printf(constants.FeedbackFormatPrompt, feedback.ResidentID, feedback.Rating, feedback.Content)
 	}

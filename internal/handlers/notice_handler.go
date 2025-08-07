@@ -115,7 +115,7 @@ func (h *NoticeHandler) GetNoticesByMonthYear() {
 
 func (h *NoticeHandler) GetNoticesByYear() {
 	reader := bufio.NewReader(os.Stdin)
-	color.Yellow("Enter the year(YYYY): ")
+	fmt.Print(color.YellowString("Enter the year(YYYY): "))
 	year, _ := reader.ReadString('\n')
 	year = strings.TrimRight(year, "\r\n")
 	notices, err := h.NoticeService.GetNoticesByYear(year)
