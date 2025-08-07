@@ -12,6 +12,8 @@ import(
 type UserRepositoryInterface interface {
 	AddUser(user model.User) error
 	GetUserByID(id string) (*model.User, error)
+	UpdateUser(user model.User) error
+	ChangePassword(id string, newHashedPassword string) error
 }
 
 type UserRepository struct{
@@ -78,5 +80,49 @@ func (r *UserRepository) AddUser(newUser model.User) error {
 	}
 
 	users = append(users, newUser)
+	return r.SaveUsers(users)
+}
+
+func (r *UserRepository) UpdateUser(updatedUser model.User) error {
+	users, err := r.LoadUsers()
+	if err != nil {
+		return err
+	}
+
+	updated := false
+	for i, u := range users {
+		if u.ID == updatedUser.ID {
+			users[i] = updatedUser
+			updated = true
+			break
+		}
+	}
+
+	if !updated {
+		return errors.New("user not found")
+	}
+
+	return r.SaveUsers(users)
+}
+
+func (r *UserRepository) ChangePassword(id string, newHashedPassword string) error {
+	users, err := r.LoadUsers()
+	if err != nil {
+		return err
+	}
+
+	updated := false
+	for i, u := range users {
+		if u.ID == id {
+			users[i].Password = newHashedPassword
+			updated = true
+			break
+		}
+	}
+
+	if !updated {
+		return errors.New("user not found")
+	}
+
 	return r.SaveUsers(users)
 }

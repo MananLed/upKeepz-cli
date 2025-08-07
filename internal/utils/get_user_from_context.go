@@ -19,13 +19,13 @@ func GetUserFromContext(ctx context.Context) (*model.User, error) {
 	}
 
 	password, ok := ctx.Value(UserPassKey).(string)
-	if !ok || password == "" {
+	if !ok {
 		return nil, errors.New("user password not found in context")
 	}
 
 	return &model.User{
 		ID:       id,
-		Password: password,
 		Role:     role,
+		Password: string(password),
 	}, nil
 }

@@ -2,11 +2,12 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/MananLed/upKeepz-cli/internal/model"
 )
 
-type CredentialRepository struct{
+type CredentialRepository struct {
 	UserRepository
 }
 
@@ -23,10 +24,13 @@ func (r *CredentialRepository) DeleteUserByIDAndRole(id string, role model.UserR
 	var updated []model.User
 	found := false
 
+	fmt.Println(id, role)
+
 	for _, u := range users {
+		fmt.Println(u.ID, u.Role)
 		if u.ID == id && u.Role == role {
 			found = true
-			continue 
+			continue
 		}
 		updated = append(updated, u)
 	}

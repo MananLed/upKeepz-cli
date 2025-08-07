@@ -1,11 +1,12 @@
 package model
 
 type Invoice struct{
-	ID int
+	ID string
 	Amount float64
 	Month string
-	Year int
-	ResidentID string 
+	Year string
 }
+
+
 
 

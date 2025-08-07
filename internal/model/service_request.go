@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Status string
 
 const(
@@ -22,5 +24,7 @@ type ServiceRequest struct {
 	ResidentID  string
 	Status      Status
 	TimeSlot    string
+	StartTime   time.Time
+	EndTime     time.Time
 	ServiceType ServiceType
 }

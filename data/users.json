@@ -1,42 +1,32 @@
 [
  {
-  "FirstName": "man",
+  "FirstName": "Jyoti",
   "MiddleName": "",
-  "LastName": "go",
+  "LastName": "Deepak",
   "MobileNumber": "4235354756",
-  "Email": "abc@watchguard.com",
-  "ID": "nin",
-  "Password": "ja",
+  "Email": "jyotideepakadmin@blossom.com",
+  "ID": "jyotideepakadmin@blossom.com",
+  "Password": "$2a$10$Q2Sovrz3dxVKuitLzIt1Le1Xkmsb2oylXeuTpq5Oh7wkjO.tCfr8q",
   "Role": "admin"
  },
  {
-  "FirstName": "man",
+  "FirstName": "Dev",
   "MiddleName": "",
-  "LastName": "nam",
+  "LastName": "Singh",
   "MobileNumber": "4354654644",
-  "Email": "mannam",
-  "ID": "m",
-  "Password": "n",
-  "Role": "resident"
- },
- {
-  "FirstName": "ban",
-  "MiddleName": "",
-  "LastName": "nab",
-  "MobileNumber": "4545454545",
-  "Email": "bannab",
-  "ID": "n",
-  "Password": "b",
+  "Email": "devsinghofficer@blossom.com",
+  "ID": "devsinghofficer@blossom.com",
+  "Password": "$2a$10$6tIYkprdkTkV5uvrVAWw3uhPN3MRnU2iphZ8g/cueNvqqcqR/1KvW",
   "Role": "officer"
  },
  {
-  "FirstName": "h",
-  "MiddleName": "\u0026",
-  "LastName": "m",
-  "MobileNumber": "4535564656",
-  "Email": "hm@",
-  "ID": "h",
-  "Password": "m",
+  "FirstName": "Divyanshii",
+  "MiddleName": "",
+  "LastName": "Resident",
+  "MobileNumber": "665565555",
+  "Email": "divy@gmail.com",
+  "ID": "divy@gmail.com",
+  "Password": "$2a$10$ZXg1dlqM2ZwxpHEEH.z7Re4KtNOPJwUkROksLbOWx9u0lkdOZPjau",
   "Role": "resident"
  }
 ]

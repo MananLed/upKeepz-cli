@@ -1,56 +1,78 @@
 package service
 
-import(
+import (
+	"context"
 	"errors"
 	"testing"
-	"github.com/MananLed/upKeepz-cli/internal/model" 
+
+	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/MananLed/upKeepz-cli/internal/utils"
+	"golang.org/x/crypto/bcrypt"
 )
 
-type MockUserRepo struct{
+type MockUserRepo struct {
 	users map[string]model.User
 }
 
 func (m *MockUserRepo) AddUser(user model.User) error {
-	if _, exists := m.users[user.ID]; exists{
+	if _, exists := m.users[user.ID]; exists {
 		return errors.New("user already exists")
 	}
-	m.users[user.ID] = user 
-	return nil 
+	m.users[user.ID] = user
+	return nil
 }
 
 func (m *MockUserRepo) GetUserByID(id string) (*model.User, error) {
-	user, exists := m.users[id] 
-	if !exists{
+	user, exists := m.users[id]
+	if !exists {
 		return nil, errors.New("user not found")
 	}
-	return &user, nil 
+	return &user, nil
+}
+
+func (m *MockUserRepo) UpdateUser(user model.User) error {
+	if _, exists := m.users[user.ID]; !exists {
+		return errors.New("user not found")
+	}
+	m.users[user.ID] = user
+	return nil
+}
+
+func (m *MockUserRepo) ChangePassword(id string, newHashedPassword string) error {
+	user, exists := m.users[id]
+	if !exists {
+		return errors.New("user not found")
+	}
+	user.Password = newHashedPassword
+	m.users[id] = user
+	return nil
 }
 
 //Tests
 
-func TestSignUp(t *testing.T){
+func TestSignUp(t *testing.T) {
 	mockRepo := &MockUserRepo{users: make(map[string]model.User)}
 	service := NewUserService(mockRepo)
 
 	user := model.User{
-		ID: "man",
+		ID:       "man",
 		Password: "nin",
-		Role: model.RoleResident,
+		Role:     model.RoleResident,
 	}
 
 	err := service.SignUp(user)
 
-	if err != nil{
+	if err != nil {
 		t.Errorf("expected signup to succeed, got error: %v", err)
 	}
 }
 
-func TestLogin(t *testing.T){
+func TestLogin(t *testing.T) {
 	mockRepo := &MockUserRepo{users: make(map[string]model.User)}
 	service := NewUserService(mockRepo)
 
 	user := model.User{
-		ID: "man",
+		ID:       "man",
 		Password: "nin",
 	}
 
@@ -63,7 +85,7 @@ func TestLogin(t *testing.T){
 	}
 }
 
-func TestLoginFailWrongPassword(t *testing.T){
+func TestLoginFailWrongPassword(t *testing.T) {
 	mockRepo := &MockUserRepo{users: make(map[string]model.User)}
 	service := NewUserService(mockRepo)
 
@@ -73,7 +95,41 @@ func TestLoginFailWrongPassword(t *testing.T){
 
 	_, err := service.Login("man", "sin")
 
-	if err == nil{
+	if err == nil {
 		t.Error("expected login to fail due to wrong password")
+	}
+}
+
+func TestChangePassword(t *testing.T) {
+	mockRepo := &MockUserRepo{users: make(map[string]model.User)}
+	service := NewUserService(mockRepo)
+
+	rawPassword := "old123"
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.DefaultCost)
+
+	user := model.User{
+		ID:       "man@example.com",
+		Password: string(hashed),
+		Role:     model.RoleResident,
+	}
+
+	mockRepo.AddUser(user)
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, utils.UserIDKey, user.ID)
+	ctx = context.WithValue(ctx, utils.UserRoleKey, user.Role)
+	ctx = context.WithValue(ctx, utils.UserPassKey, user.Password)
+
+	newPassword := "new123"
+
+	err := service.ChangePassword(ctx, rawPassword, newPassword)
+	if err != nil {
+		t.Errorf("Change Password failed: %v", err)
+	}
+
+	updatedUser, _ := mockRepo.GetUserByID(user.ID)
+	err = bcrypt.CompareHashAndPassword([]byte(updatedUser.Password), []byte(newPassword))
+	if err != nil {
+		t.Errorf("Password was not updated correctly")
 	}
 }

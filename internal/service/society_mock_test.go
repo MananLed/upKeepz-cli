@@ -36,7 +36,6 @@ func ctxWithUser(user *model.User) context.Context {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, utils.UserIDKey, user.ID)
 	ctx = context.WithValue(ctx, utils.UserRoleKey, user.Role)
-	ctx = context.WithValue(ctx, utils.UserPassKey, user.Password)
 	return ctx
 }
 
@@ -58,7 +57,7 @@ func TestGetAllResidentsAsAdmin(t *testing.T) {
 
 	service := NewSocietyService(mockRepo)
 
-	admin := &model.User{ID: "a1",Password: "n1", Role: model.RoleAdmin}
+	admin := &model.User{ID: "a1", Role: model.RoleAdmin}
 	ctx := ctxWithUser(admin)
 
 	residents, err := service.GetAllResidents(ctx)
@@ -80,7 +79,7 @@ func TestGetAllOfficersAsAdmin(t *testing.T) {
 
 	service := NewSocietyService(mockRepo)
 
-	admin := &model.User{ID: "a1",Password: "n1", Role: model.RoleAdmin}
+	admin := &model.User{ID: "a1",Password: "", Role: model.RoleAdmin}
 	ctx := ctxWithUser(admin)
 
 	officers, err := service.GetAllOfficers(ctx)
@@ -96,7 +95,7 @@ func TestGetAllResidentsAsNonAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{}
 	service := NewSocietyService(mockRepo)
 
-	officer := &model.User{ID: "o1",Password: "n2", Role: model.RoleOfficer}
+	officer := &model.User{ID: "o1",Password: "", Role: model.RoleOfficer}
 	ctx := ctxWithUser(officer)
 
 	_, err := service.GetAllResidents(ctx)
@@ -109,7 +108,7 @@ func TestGetAllOfficersAsNonAdmin(t *testing.T) {
 	mockRepo := &MockSocietyRepo{}
 	service := NewSocietyService(mockRepo)
 
-	resident := &model.User{ID: "r1",Password: "n3", Role: model.RoleResident}
+	resident := &model.User{ID: "r1",Password: "", Role: model.RoleResident}
 	ctx := ctxWithUser(resident)
 
 	_, err := service.GetAllOfficers(ctx)

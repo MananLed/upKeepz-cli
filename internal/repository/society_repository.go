@@ -2,10 +2,12 @@ package repository
 
 import (
 	"encoding/json"
-	"os"
 	"fmt"
-	"github.com/MananLed/upKeepz-cli/internal/model"
+	"os"
+
 	"github.com/MananLed/upKeepz-cli/constants"
+	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/fatih/color"
 )
 
 type SocietyRepository struct{}
@@ -49,7 +51,12 @@ func (s *SocietyRepository) GetAllResidents() ([]model.User, error){
 			residents = append(residents, user)
 		}
 	}
-	fmt.Println("Total Residents:", count)
+	if(len(residents) != 0) {
+		fmt.Print(color.YellowString("Total Residents: "), count)
+	}else {
+		fmt.Print("There are no residents currently.")
+	}
+	fmt.Println()
 	return residents, nil 
 }
 
@@ -68,6 +75,11 @@ func (s *SocietyRepository) GetAllOfficers() ([]model.User, error){
 			officers = append(officers, user)
 		}
 	}
-	fmt.Println("Total Officers:", count)
+	if(len(officers) != 0) {
+		fmt.Print(color.YellowString("Total Officers: "), count)
+	} else{
+		fmt.Print("There are no officers currently.")
+	}
+	fmt.Println()
 	return officers, nil
 }

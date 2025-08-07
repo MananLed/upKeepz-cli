@@ -8,6 +8,8 @@ import (
 	"github.com/MananLed/upKeepz-cli/internal/model"
 	"github.com/MananLed/upKeepz-cli/internal/repository"
 	"github.com/MananLed/upKeepz-cli/internal/utils"
+	"github.com/fatih/color"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -32,13 +34,34 @@ func (us *UserService) Login(id string, password string) (*model.User, error) {
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
-	if user.Password != password {
-		return nil, errors.New("incorrect password")
-	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		color.Red("Incorrect password.")
+		return nil, err
+	} 
 	return user, nil
 }
 
-// Utility function if you want to load user from context in future services
-func (us *UserService) GetLoggedInUser(ctx context.Context) (*model.User, error) {
-	return utils.GetUserFromContext(ctx)
+func (us *UserService) UpdateProfile(user model.User) error {
+	return us.UserRepo.UpdateUser(user)
+}
+
+func (us *UserService) ChangePassword(ctx context.Context, currentPassword string, newPassword string) error {
+	user, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		color.Red("Unauthorized access.")
+		return err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword))
+	if err != nil {
+		return errors.New("current password is incorrect")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	return us.UserRepo.ChangePassword(user.ID, string(hashedPassword))
 }

@@ -19,15 +19,12 @@ func NewCredentialHandler(s *service.CredentialService) *CredentialHandler {
 	return &CredentialHandler{Service: s}
 }
 
-func promptInput(label string) string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(label)
-	input, _ := reader.ReadString('\n')
-	return strings.TrimSpace(input)
-}
-
 func (h *CredentialHandler) DeleteOfficer(ctx context.Context) {
-	id := promptInput("Enter Officer ID to delete: ")
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print(color.YellowString("Enter the officer ID to delete: "))
+	id, _ := reader.ReadString('\n')
+	id = strings.TrimRight(id, "\r\n")
 	err := h.Service.DeleteOfficerCredentials(ctx, id)
 	if err != nil {
 		color.Red("Failed to delete officer: %v", err)
@@ -37,8 +34,15 @@ func (h *CredentialHandler) DeleteOfficer(ctx context.Context) {
 }
 
 func (h *CredentialHandler) DeleteResident(ctx context.Context) {
-	id := promptInput("Enter Resident ID to delete: ")
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print(color.YellowString("Enter the resident ID to delete: "))
+
+	id, _ := reader.ReadString('\n')
+	id = strings.TrimRight(id, "\r\n")
+
 	err := h.Service.DeleteResidentCredentials(ctx, id)
+
 	if err != nil {
 		color.Red("Failed to delete resident: %v", err)
 	} else {

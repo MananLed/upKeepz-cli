@@ -18,17 +18,23 @@ func NewCredentialService(r repository.CredentialRepositoryInterface) *Credentia
 }
 
 func (s *CredentialService) DeleteOfficerCredentials(ctx context.Context, officerID string) error {
+
 	role, ok := ctx.Value(utils.UserRoleKey).(model.UserRole)
+
 	if !ok || role != model.RoleAdmin {
 		return errors.New("unauthorized: only admin can delete credentials")
 	}
+
 	return s.Repo.DeleteUserByIDAndRole(officerID, model.RoleOfficer)
 }
 
 func (s *CredentialService) DeleteResidentCredentials(ctx context.Context, residentID string) error {
+
 	role, ok := ctx.Value(utils.UserRoleKey).(model.UserRole)
+
 	if !ok || role != model.RoleAdmin {
 		return errors.New("unauthorized: only admin can delete credentials")
 	}
+	
 	return s.Repo.DeleteUserByIDAndRole(residentID, model.RoleResident)
 }

@@ -29,7 +29,7 @@ func (h *SocietyHandler) HandleViewResidents(ctx context.Context) {
 		return
 	}
 
-	fmt.Println("All Residents:")
+	fmt.Println("All Residents:-")
 	for _, user := range residents {
 		fmt.Printf("ID: %s\n", user.ID)
 	}
@@ -48,7 +48,7 @@ func (h *SocietyHandler) HandleViewOfficers(ctx context.Context) {
 		return
 	}
 
-	fmt.Println("All Officers:")
+	fmt.Println("All Officers:-")
 	for _, user := range officers {
 		fmt.Printf("ID: %s\n", user.ID)
 	}

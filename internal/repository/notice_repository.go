@@ -2,18 +2,19 @@ package repository
 
 import (
 	"encoding/json"
-	"errors"
 	"os"
 	"sync"
 
 	"github.com/MananLed/upKeepz-cli/constants"
 	"github.com/MananLed/upKeepz-cli/internal/model"
+	"github.com/MananLed/upKeepz-cli/internal/utils"
 )
 
 type NoticeRepositoryInterface interface {
 	SaveNotice(notice model.Notice) error
 	GetAllNotices() ([]model.Notice, error)
-	GetNoticeByID(id int) (*model.Notice, error)
+	GetNoticesByMonthYear(month string, year string) ([]model.Notice, error)
+	GetNoticesByYear(year string) ([]model.Notice, error)
 }
 
 type NoticeRepository struct {
@@ -46,7 +47,7 @@ func (r *NoticeRepository) SaveNotice(notice model.Notice) error {
 		return err
 	}
 
-	notice.ID = len(notices) + 1
+	notice.ID = utils.GenerateUUID()
 	notices = append(notices, notice)
 
 	r.mu.Lock()
@@ -63,17 +64,36 @@ func (r *NoticeRepository) GetAllNotices() ([]model.Notice, error) {
 	return r.loadNotices()
 }
 
-func (r *NoticeRepository) GetNoticeByID(id int) (*model.Notice, error) {
+func (r *NoticeRepository) GetNoticesByMonthYear(month string, year string) ([]model.Notice, error) {
 	notices, err := r.loadNotices()
 	if err != nil {
 		return nil, err
 	}
 
+	var noticesOfMonth []model.Notice
+
 	for _, n := range notices {
-		if n.ID == id {
-			return &n, nil
+		if n.Month == month && n.Year == year {
+			noticesOfMonth = append(noticesOfMonth, n)
 		}
 	}
 
-	return nil, errors.New("notice not found")
+	return noticesOfMonth, nil
+}
+
+func (r *NoticeRepository) GetNoticesByYear(year string) ([]model.Notice, error) {
+	notices, err := r.loadNotices()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var noticesYear []model.Notice
+
+	for _, notice := range notices {
+		if notice.Year == year {
+			noticesYear = append(noticesYear, notice)
+		}
+	}
+	return noticesYear, nil
 }

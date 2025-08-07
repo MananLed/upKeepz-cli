@@ -1,7 +1,9 @@
 package model
 
 type Notice struct {
-	ID         int
+	ID         string
 	DateIssued string 
 	Content    string
+	Month string
+	Year string
 }
