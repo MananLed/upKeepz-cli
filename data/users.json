@@ -40,13 +40,23 @@
   "Role": "officer"
  },
  {
-  "FirstName": "Divyanshi",
+  "FirstName": "Manan",
   "MiddleName": "",
-  "LastName": "Raz",
-  "MobileNumber": "7657847588",
-  "Email": "divy@gmail.com",
-  "ID": "divy@gmail.com",
-  "Password": "$2a$10$vkfJueQ8V5ZDPopz1bxHXepSpJk880.CYqBpfu08rWJO6Amar0VsO",
+  "LastName": "Ledw",
+  "MobileNumber": "7686776687",
+  "Email": "manan@gmail.com",
+  "ID": "manan@gmail.com",
+  "Password": "$2a$10$4uQy7u37c7e9y9oclUJgmOY4IsPLNozhx33d6EFhchk1kAEdrVDhu",
+  "Role": "resident"
+ },
+ {
+  "FirstName": "Arjun",
+  "MiddleName": "",
+  "LastName": "Singh",
+  "MobileNumber": "7687678878",
+  "Email": "arjunsingh@gmail.com",
+  "ID": "arjunsingh@gmail.com",
+  "Password": "$2a$10$kYKxTriaVtiI.A2L2x2lFOVu4oyrzCUlTp7k6Ey1xiQkyzEfnY72.",
   "Role": "resident"
  }
 ]

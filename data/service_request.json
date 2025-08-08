@@ -34,5 +34,14 @@
     "StartTime": "0001-01-01T10:30:00+05:30",
     "EndTime": "0001-01-01T11:15:00+05:30",
     "ServiceType": "plumber"
+  },
+  {
+    "RequestID": "e70778d2-9350-4d14-b1a5-34bb588bb9e8",
+    "ResidentID": "arjunsingh@gmail.com",
+    "Status": "pending",
+    "TimeSlot": "9:45 AM to 10:30 AM",
+    "StartTime": "0001-01-01T09:45:00+05:30",
+    "EndTime": "0001-01-01T10:30:00+05:30",
+    "ServiceType": "electrician"
   }
 ]

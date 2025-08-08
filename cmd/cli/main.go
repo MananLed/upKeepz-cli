@@ -59,7 +59,7 @@ func main() {
 		color.Cyan("2." + string(constants.LoginPrompt))
 		color.Cyan("3." + string(constants.ExitPrompt))
 
-		fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
+		fmt.Print(color.BlueString(string(constants.ChoiceMainPrompt)))
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)

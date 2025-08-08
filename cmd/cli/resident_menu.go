@@ -24,17 +24,19 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 		myFigure.Print()
 		fmt.Println(constants.ResidentEmogiPrompt)
 
-		color.Cyan("1. Manage Service Requests")
-		color.Cyan("2. View Notices")
-		color.Cyan("3. Manage Feedback")
-		color.Cyan("4. View Invoices")
-		color.Cyan("5. Manage Profile")
-		color.Red("6. Logout")
+		color.Cyan("1. " + string(constants.ManageServiceRequestPrompt))
+		color.Cyan("2. " + string(constants.ViewNoticesPrompt))
+		color.Cyan("3. " + string(constants.ManageFeedbackPrompt))
+		color.Cyan("4. " + string(constants.ViewInvoicesPrompt))
+		color.Cyan("5. " + string(constants.ManageProfilePrompt))
+		color.Red("6. " + string(constants.LogoutPrompt))
+
+returnmain:
 		fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 
 		choice, _ := reader.ReadString('\n')
 		choice = strings.TrimSpace(choice)
-
+		if(choice == "") {continue}
 		switch choice {
 		case "1":
 			for {
@@ -44,12 +46,13 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				color.Cyan("4." + string(constants.GetApprovedServiceRequestPrompt))
 				color.Cyan("5." + string(constants.GetPendingServiceRequestPrompt))
 				color.Cyan("6. Exit")
-				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 
+return1:				
+				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
+				if(ch == "") {continue}
 				exit := false
-
 				switch ch {
 				case "1":
 					sHandler.BookServiceRequest(ctx)
@@ -70,6 +73,7 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				if exit {
 					break
 				}
+				goto return1
 			}
 
 		case "2":
@@ -78,10 +82,12 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				color.Cyan("2." + string(constants.GetNoticesByMonthYear))
 				color.Cyan("3." + string(constants.GetNoticesByYear))
 				color.Cyan("4. Exit")
-				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 
+return2:				
+				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
+				if(ch == "") {continue}
 				exit := false
 
 				switch ch {
@@ -100,6 +106,7 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				if exit {
 					break
 				}
+				goto return2
 			}
 
 		case "3":
@@ -107,10 +114,13 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				color.Cyan("1." + string(constants.GetFeedbackForResident))
 				color.Cyan("2." + string(constants.GiveFeedbackPrompt))
 				color.Cyan("3. Exit")
-				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 
+return3:
+				
+				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
+				if(ch == "") {continue}
 				exit := false
 
 				switch ch {
@@ -127,6 +137,7 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				if exit {
 					break
 				}
+				goto return3
 			}
 
 		case "4":
@@ -134,10 +145,11 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				color.Cyan("1." + string(constants.SearchAInvoice))
 				color.Cyan("2." + string(constants.ListInvoicesOfAYear))
 				color.Cyan("3. Exit")
+return4:
 				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
-
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
+				if(ch == "") {continue}
 				exit := false
 
 				switch ch {
@@ -154,6 +166,7 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				if exit {
 					break
 				}
+				goto return4
 			}
 
 		case "5": 
@@ -163,10 +176,11 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				color.Cyan("3." + string(constants.ViewProfilePrompt))
 				color.Red("4." + string(constants.DeleteProfilePrompt))
 				color.Cyan("5. Exit")
+return5:
 				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
-
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
+				if(ch == "") {continue}
 				exit := false
 
 				switch ch {
@@ -188,6 +202,7 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				if exit {
 					break
 				}
+				goto return5
 			}
 
 		case "6": 
@@ -197,5 +212,6 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 		default:
 			color.Red("Invalid choice, try again.")
 		}
+		goto returnmain
 	}
 }

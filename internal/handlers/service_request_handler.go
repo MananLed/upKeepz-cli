@@ -62,7 +62,7 @@ func (h *ServiceRequestHandler) BookServiceRequest(ctx context.Context) {
 		RequestID:   requestID,
 		ResidentID:  user.ID,
 		Status:      model.StatusPending,
-		TimeSlot:    fmt.Sprintf("%s to %s", chosenSlot.StartTime.Format("2:34 PM"), chosenSlot.EndTime.Format("2:34 PM")),
+		TimeSlot:    fmt.Sprintf("%s to %s", chosenSlot.StartTime.Format("3:04 PM"), chosenSlot.EndTime.Format("3:04 PM")),
 		StartTime:   chosenSlot.StartTime,
 		EndTime:     chosenSlot.EndTime,
 		ServiceType: model.ServiceType(serviceType),
