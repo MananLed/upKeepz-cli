@@ -133,3 +133,20 @@ func TestChangePassword(t *testing.T) {
 		t.Errorf("Password was not updated correctly")
 	}
 }
+
+func (m *MockUserRepo) IsPasswordUnique(hashedPassword string) bool {
+	for _, user := range m.users {
+		if user.Password == hashedPassword {
+			return false
+		}
+	}
+	return true
+}
+
+func (m *MockUserRepo) DeleteUserByID(id string) error {
+	if _, exists := m.users[id]; !exists {
+		return errors.New("user not found")
+	}
+	delete(m.users, id)
+	return nil
+}

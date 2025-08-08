@@ -63,5 +63,21 @@ func (us *UserService) ChangePassword(ctx context.Context, currentPassword strin
 		return err
 	}
 
+	if !us.UserRepo.IsPasswordUnique(string(hashedPassword)) {
+	return errors.New("password is already used by another user")
+	}
+
 	return us.UserRepo.ChangePassword(user.ID, string(hashedPassword))
+}
+
+func (us *UserService) IsPasswordUnique(Password string) bool {
+	return us.UserRepo.IsPasswordUnique(Password)
+}
+
+func (us *UserService) DeleteProfile(ctx context.Context) error {
+	user, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		return err
+	}
+	return us.UserRepo.DeleteUserByID(user.ID)
 }

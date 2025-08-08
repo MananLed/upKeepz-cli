@@ -1,12 +1,14 @@
 package repository
 
-import(
+import (
 	"encoding/json"
 	"errors"
 	"os"
 	"sync"
-	"github.com/MananLed/upKeepz-cli/internal/model"
+
 	"github.com/MananLed/upKeepz-cli/constants"
+	"github.com/MananLed/upKeepz-cli/internal/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepositoryInterface interface {
@@ -14,40 +16,42 @@ type UserRepositoryInterface interface {
 	GetUserByID(id string) (*model.User, error)
 	UpdateUser(user model.User) error
 	ChangePassword(id string, newHashedPassword string) error
+	IsPasswordUnique(hashedPassword string) bool
+	DeleteUserByID(id string) error
 }
 
-type UserRepository struct{
-	mu sync.Mutex 
+type UserRepository struct {
+	mu sync.Mutex
 }
 
-func (r *UserRepository) LoadUsers() ([]model.User, error){
+func (r *UserRepository) LoadUsers() ([]model.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	data, err := os.ReadFile(string(constants.UserDataPath))
 
-	if err != nil{
-		if os.IsNotExist(err){
+	if err != nil {
+		if os.IsNotExist(err) {
 			return []model.User{}, nil
 		}
-		return nil, err 
+		return nil, err
 	}
-	
+
 	var users []model.User
 	err = json.Unmarshal(data, &users)
-	if err != nil{
-		return nil, err 
+	if err != nil {
+		return nil, err
 	}
 
-	return users, nil 
+	return users, nil
 }
 
-func (r *UserRepository) SaveUsers(users []model.User) error{
+func (r *UserRepository) SaveUsers(users []model.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	data, err := json.MarshalIndent(users, ""," ")
-	if err != nil{
+	data, err := json.MarshalIndent(users, "", " ")
+	if err != nil {
 		return err
 	}
 	return os.WriteFile(string(constants.UserDataPath), data, 0644)
@@ -125,4 +129,42 @@ func (r *UserRepository) ChangePassword(id string, newHashedPassword string) err
 	}
 
 	return r.SaveUsers(users)
+}
+
+func (r *UserRepository) IsPasswordUnique(Password string) bool {
+	users, err := r.LoadUsers()
+	if err != nil {
+		return false
+	}
+
+	for _, user := range users {
+			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(Password))
+			if err == nil{
+				return false
+			}
+	}
+	return true
+}
+
+func (r *UserRepository) DeleteUserByID(id string) error {
+	users, err := r.LoadUsers()
+	if err != nil {
+		return err
+	}
+
+	updatedUsers := []model.User{}
+	found := false
+	for _, user := range users {
+		if user.ID != id {
+			updatedUsers = append(updatedUsers, user)
+		} else {
+			found = true
+		}
+	}
+
+	if !found {
+		return errors.New("user not found")
+	}
+
+	return r.SaveUsers(updatedUsers)
 }

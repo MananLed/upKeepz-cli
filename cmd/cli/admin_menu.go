@@ -211,7 +211,8 @@ func ShowAdminDashboard(ctx context.Context, user *model.User, uHandler *handler
 			for {
 				color.Cyan("1." + string(constants.UpdateProfilePrompt))
 				color.Cyan("2." + string(constants.ChangePasswordPrompt))
-				color.Cyan("3. Exit")
+				color.Cyan("3." + string(constants.ViewProfilePrompt))
+				color.Cyan("4. Exit")
 				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 				ch, _ := reader.ReadString('\n')
 				ch = strings.TrimSpace(ch)
@@ -223,6 +224,8 @@ func ShowAdminDashboard(ctx context.Context, user *model.User, uHandler *handler
 				case "2":
 					uHandler.ChangePassword(ctx)
 				case "3":
+					uHandler.ViewProfile(user)
+				case "4":
 					color.Red("Exit")
 					exit = true
 				default:

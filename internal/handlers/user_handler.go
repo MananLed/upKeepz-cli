@@ -100,10 +100,12 @@ func (h *UserHandler) SignUp() {
 
 	fmt.Print(color.YellowString(string(constants.MiddleNamePrompt)))
 	middleName, _ := reader.ReadString('\n')
+	middleName = strings.TrimSpace(middleName)
 
 	lastName := PromptRequired(string(constants.LastNamePrompt), reader)
 
 	email := PromptRequired(string(constants.EmailPrompt), reader)
+	
 
 	mobile := PromptRequired(string(constants.MobilePrompt), reader)
 	for {
@@ -128,6 +130,10 @@ func (h *UserHandler) SignUp() {
 
 		if !ValidatePassword(passwordStr) {
 			color.Red("Invalid password, enter again")
+			continue
+		}
+			if !h.UserService.IsPasswordUnique(passwordStr) {
+			color.Red("This password is already in use. Please enter a different one.")
 			continue
 		}
 		break
@@ -250,16 +256,6 @@ func (h *UserHandler) UpdateProfile(user *model.User) {
 		user.MobileNumber = mobile
 	}
 
-	fmt.Print(color.YellowString("Update Email/ID: "))
-	email, _ := reader.ReadString('\n')
-	email = strings.TrimSpace(email)
-	email = strings.TrimRight(email, "\r\n")
-	if email != "" && ValidateEmail(email) {
-		user.Email = email
-		user.ID = email
-	}
-
-
 	if err := h.UserService.UpdateProfile(*user); err != nil {
 		color.Red("Failed to update profile: %v", err)
 		return
@@ -318,13 +314,27 @@ func (h *UserHandler) CreateOfficer(ctx context.Context) {
 	reader := bufio.NewReader(os.Stdin)
 	email := PromptRequired("Officer Email (used as ID)", reader)
 
-	fmt.Print(color.YellowString("Set temporary password for the officer: "))
-	password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
-	passwordStr := string(password)
-	passwordStr = strings.TrimRight(passwordStr, "\r\n")
-	password = []byte(passwordStr)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	var passwordStr string
+	var hashedPassword []byte
 
+	for {
+		fmt.Print(color.YellowString("Set temporary password for the officer: "))
+		password, _ := go_asterisks.GetUsersPassword("", true, os.Stdin, os.Stdout)
+		passwordStr = string(password)
+		passwordStr = strings.TrimRight(passwordStr, "\r\n")
+
+		if !ValidatePassword(passwordStr) {
+			color.Red("Invalid password format.")
+			continue
+		}
+
+		hashedPassword, _ = bcrypt.GenerateFromPassword([]byte(passwordStr), bcrypt.DefaultCost)
+		if !h.UserService.IsPasswordUnique(string(hashedPassword)) {
+			color.Red("Password already exists. Please enter a different one.")
+			continue
+		}
+		break
+	}
 	newOfficer := model.User{
 		Email:    email,
 		ID:       email,
@@ -336,5 +346,41 @@ func (h *UserHandler) CreateOfficer(ctx context.Context) {
 		color.Red("Error creating officer: %v", err)
 	} else {
 		color.Green("Officer created successfully.")
+	}
+}
+
+func (h *UserHandler) ViewProfile(user *model.User) {
+	color.Cyan("\n--- User Profile ---")
+	fmt.Println("First Name:", user.FirstName)
+	fmt.Println("Middle Name:", user.MiddleName)
+	fmt.Println("Last Name:", user.LastName)
+	fmt.Println("Email/ID:", user.Email)
+	fmt.Println("Mobile Number:", user.MobileNumber)
+	fmt.Println("Role:", user.Role)
+	color.Cyan("--------------------\n")
+}
+
+func (h *UserHandler) DeleteProfile(ctx context.Context) {
+	reader := bufio.NewReader(os.Stdin)
+	_, err := utils.GetUserFromContext(ctx)
+	if err != nil {
+		color.Red("Unauthorized access.")
+		return
+	}
+
+	fmt.Print(color.YellowString("Are you sure you want to delete your profile? Type YES to confirm: "))
+	confirmation, _ := reader.ReadString('\n')
+	confirmation = strings.TrimSpace(confirmation)
+
+	if confirmation != "YES" {
+		color.Red("Profile deletion cancelled.")
+		return
+	}
+
+	err = h.UserService.DeleteProfile(ctx)
+	if err != nil {
+		color.Red("Failed to delete profile: %v", err)
+	} else {
+		color.Green("Profile deleted successfully!")
 	}
 }

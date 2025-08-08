@@ -48,6 +48,8 @@ const(
 	IssueInvoice Prompt = "Issue Invoice"
 	SearchAInvoice = "Search a Invoice"
 	ListInvoicesOfAYear = "Search invoices of a Year"
+	DeleteProfilePrompt = "Delete Profile"
+	ViewProfilePrompt = "View Profile"
 	NoticeFormatPrompt = "ID: %s\t|\tDate: %s\nContent: \n %s\n\n"
 	SerivceFormatPrompt = "RequestID: %s Service Type: %s | ResidentID: %s | TimeSlot: %s | Status: %s\n\n"
 	FeedbackFormatPrompt = "ResidentID: %s | Rating: %d\nContent:-\n%s\n\n"

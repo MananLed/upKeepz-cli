@@ -160,7 +160,9 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 			for {
 				color.Cyan("1." + string(constants.UpdateProfilePrompt))
 				color.Cyan("2." + string(constants.ChangePasswordPrompt))
-				color.Cyan("3. Exit")
+				color.Cyan("3." + string(constants.ViewProfilePrompt))
+				color.Red("4." + string(constants.DeleteProfilePrompt))
+				color.Cyan("5. Exit")
 				fmt.Print(color.BlueString(string(constants.ChoicePrompt)))
 
 				ch, _ := reader.ReadString('\n')
@@ -173,6 +175,11 @@ func ShowResidentDashboard(ctx context.Context, user *model.User, uHandler *hand
 				case "2":
 					uHandler.ChangePassword(ctx)
 				case "3":
+					uHandler.ViewProfile(user)
+				case "4":
+					uHandler.DeleteProfile(ctx)
+					return
+				case "5":
 					color.Red("Exit")
 					exit = true
 				default:
